@@ -1,54 +1,65 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load cloudinary %}
 {% load markdown_extras %}
 
-{% block title %} {{post.title}} {% endblock title %}
+{% block og_title %}{{ post.title }}{% endblock %}
+{% block og_description %}{{ post.overview|truncatechars:160 }}{% endblock %}
+{% block og_image %}
+{% if post.thumbnail_img %}
+    {{ cloudinary_url(post.thumbnail_img.name, format='auto', width=1200, height=630) }}
+{% else %}
+    {% static 'img/default-og.jpg' %}
+{% endif %}
+{% endblock %}
 
+{% block title %}{{ post.title }} | Chhohreivung Blog{% endblock %}
 
 {% block links %}
-    <link rel="stylesheet" href="{% static 'css/css-reset.css' %}">
-    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
-    <link rel="stylesheet" href="{% static 'css/myCss-fm.css' %}">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/post-style.css' %}">
-{% endblock links %}
-
+<link rel="stylesheet" href="{% static 'css/css-reset.css' %}">
+<link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+<link rel="stylesheet" href="{% static 'css/myCss-fm.css' %}">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/post-style.css' %}">
+{% endblock %}
 
 {% block content %}
-
 {% include 'header.html' %}
 
 <main class="flex-ctr-clm">
     <div class="container flex-ctr-str">
+
+        <!-- Main Post -->
         <div class="post flex-str-clm">
-            <h1 class="post-title">{{post.title}}</h1>
+            <h1 class="post-title">{{ post.title }}</h1>
             
             <p class="categorie post-info">
-                <span>Categories : </span>
+                <span>Categories: </span>
                 {% for categorie in post.categories.all %}
                     <a href="{% url 'category' categorie.slug %}">{{ categorie.title }}</a>{% if not forloop.last %},{% endif %}
                 {% endfor %}
             </p>
             
             <hr width="50%">
-            
-            <img class="thumbnail" src="{{post.thumbnail_img.url}}" alt="thumbnail of {{post.slug}}">
+
+            {% if post.thumbnail_img %}
+            <img class="thumbnail" src="{{ post.thumbnail_img.url }}" alt="Thumbnail of {{ post.title }}">
+            {% endif %}
             
             <div class="post-content">
-                {{ post.content | safe }} 
+                {{ post.content|safe }}
             </div>
 
             <div class="about-author flex-center">
-                <div class="profile-img">
-                </div>
+                <div class="profile-img"></div>
                 <div class="profile-details">
-                    <b>Wrote By : </b>
-                    <p class="profile-user">{{ post.author.username }}</p> 
+                    <b>Written by:</b>
+                    <p class="profile-user">{{ post.author.username }}</p>
                 </div>
             </div>
-
         </div>
-        
+
+        <!-- Sidebar -->
         <div class="aside flex-ctr-clm">
             <h2>Categories</h2>
             <div class="category-list">
@@ -64,7 +75,7 @@
             </div>
 
             <hr>
-            
+
             <h2>Recent Posts</h2>
             <div class="recent-posts">
                 {% for recent_post in recent_posts %}
@@ -77,13 +88,10 @@
                     <p>No recent posts found.</p>
                 {% endfor %}
             </div>
-
-            <hr>
-
         </div>
+
     </div>
 </main>
 
 {% include 'footer.html' %}
-
 {% endblock content %}

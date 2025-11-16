@@ -1,51 +1,55 @@
-{% extends "base.html" %}
 {% load static %}
-{% load markdown_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post.title }} | Chhohreivung Blog</title>
 
-{% block og_title %}{{ post.title }}{% endblock %}
-{% block og_description %}{{ post.overview|truncatechars:160 }}{% endblock %}
+    {% if og_post and og_post.featured_image %}
+        {% with og_img=og_post.featured_image.url %}
+    {% else %}
+        {% with og_img=static('img/default-og.jpg') %}
+    {% endif %}
 
-{% block title %}{{ post.title }}{% endblock %}
+    <meta property="og:title" content="{{ og_post.title|default:'Chhohreivung Blog' }}">
+    <meta property="og:description" content="{{ og_post.overview|default:'Latest posts' }}">
+    <meta property="og:image" content="{{ og_img }}">
+    {% endwith %}
 
-{% block links %}
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
-<link rel="stylesheet" href="{% static 'css/post-style.css' %}">
-{% endblock %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/myCss-fm.css' %}">
+</head>
+<body>
+<header>
+    <nav>
+        <!-- Navbar here -->
+    </nav>
+</header>
 
-{% block content %}
-{% include 'header.html' %}
-
-<main class="container">
-    <article class="post">
+<main>
+    <article>
         <h1>{{ post.title }}</h1>
-        <p class="categories">
-            Categories: 
-            {% for cat in post.categories.all %}
-                <a href="{% url 'category' cat.slug %}">{{ cat.title }}</a>{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-        </p>
-
-        <img class="thumbnail" src="{{ post.thumbnail_img.url }}" alt="Thumbnail of {{ post.slug }}">
-
-        <div class="post-content">{{ post.content|safe }}</div>
-
-        <div class="author">
-            <p>Wrote by: {{ post.author.username }}</p>
+        <div class="featured-image">
+            <img src="{% if post.featured_image %}{{ post.featured_image.url }}{% else %}{% static 'img/default-og.jpg' %}{% endif %}" 
+                 alt="{{ post.title }}" class="responsive-img">
         </div>
+        <div class="content">{{ post.content|safe }}</div>
     </article>
 
     <aside>
-        <h2>Categories</h2>
-        {% for category in all_categories %}
-            <p><a href="{% url 'category' category.slug %}">{{ category.title }} ({{ category.post_count }})</a></p>
-        {% endfor %}
+        <h3>Recent Posts</h3>
+        <ul>
+            {% for rpost in recent_posts %}
+                <li><a href="{% url 'post' rpost.slug %}">{{ rpost.title }}</a></li>
+            {% endfor %}
+        </ul>
 
-        <h2>Recent Posts</h2>
-        {% for recent_post in recent_posts %}
-            <p><a href="{% url 'post' recent_post.slug %}">{{ recent_post.title }}</a></p>
-        {% endfor %}
+        <h3>Categories</h3>
+        <ul>
+            {% for category in all_categories %}
+                <li><a href="{% url 'category_Post' category.slug %}">{{ category.name }} ({{ category.post_count }})</a></li>
+            {% endfor %}
+        </ul>
     </aside>
 </main>
-
-{% include 'footer.html' %}
-{% endblock %}
+</body>

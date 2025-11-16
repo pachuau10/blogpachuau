@@ -148,3 +148,8 @@ a{
 .show-pop-up {
     display: flex;
 }
+
+.responsive-img {
+    max-width: 100%;
+    height: auto;
+}

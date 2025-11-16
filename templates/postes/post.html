@@ -1,41 +1,39 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{{ post.title }} | Chhohreivung Blog</title>
 
-    {% if og_post and og_post.featured_image %}
-        {% with og_img=og_post.featured_image.url %}
-    {% else %}
-        {% with og_img=static('img/default-og.jpg') %}
-    {% endif %}
+    <!-- OG / Social Meta -->
+    <meta property="og:title" content="{{ post.title }}">
+    <meta property="og:description" content="{{ post.overview }}">
+    <meta property="og:image" content="{% if post.featured_image %}{{ post.featured_image.url }}{% else %}{% static 'img/default-og.jpg' %}{% endif %}">
 
-    <meta property="og:title" content="{{ og_post.title|default:'Chhohreivung Blog' }}">
-    <meta property="og:description" content="{{ og_post.overview|default:'Latest posts' }}">
-    <meta property="og:image" content="{{ og_img }}">
-    {% endwith %}
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/myCss-fm.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 <header>
     <nav>
-        <!-- Navbar here -->
+        <!-- Your navbar here -->
     </nav>
 </header>
 
-<main>
+<main class="container">
     <article>
         <h1>{{ post.title }}</h1>
         <div class="featured-image">
             <img src="{% if post.featured_image %}{{ post.featured_image.url }}{% else %}{% static 'img/default-og.jpg' %}{% endif %}" 
                  alt="{{ post.title }}" class="responsive-img">
         </div>
-        <div class="content">{{ post.content|safe }}</div>
+        <div class="content">
+            {{ post.content|safe }}
+        </div>
     </article>
 
+    <!-- Sidebar -->
     <aside>
         <h3>Recent Posts</h3>
         <ul>
@@ -52,4 +50,9 @@
         </ul>
     </aside>
 </main>
+
+<footer>
+    <!-- Optional footer -->
+</footer>
 </body>
+</html>

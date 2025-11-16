@@ -9,13 +9,15 @@
     <!-- OG / Social Meta -->
     {% if featured_image %}
         {% with og_img=featured_image.url %}
+            <meta property="og:title" content="{{ post.title }}">
+            <meta property="og:description" content="{{ post.overview }}">
+            <meta property="og:image" content="{{ og_img }}">
+        {% endwith %}
     {% else %}
-        {% with og_img=static('img/default-og.jpg') %}
+        <meta property="og:title" content="{{ post.title }}">
+        <meta property="og:description" content="{{ post.overview }}">
+        <meta property="og:image" content="{% static 'img/default-og.jpg' %}">
     {% endif %}
-    <meta property="og:title" content="{{ post.title }}">
-    <meta property="og:description" content="{{ post.overview }}">
-    <meta property="og:image" content="{{ og_img }}">
-    {% endwith %}
 
     <link rel="stylesheet" href="{% static 'css/myCss-fm.css' %}">
 </head>

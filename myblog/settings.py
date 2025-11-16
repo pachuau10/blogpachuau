@@ -16,7 +16,13 @@ SECRET_KEY = config("SECRET_KEY", default="change-me")
 DEBUG = config("DEBUG", default=True, cast=bool)
 
 # In production, replace '*' with your actual domain
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
+ALLOWED_HOSTS = ["chhohreivung.up.railway.app", "www.chhohreivung.up.railway.app"]
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://chhohreivung.up.railway.app",
+]
+
 
 # -------------------------
 # INSTALLED APPS

@@ -534,3 +534,128 @@ footer .medias .media a i {
         font-size: 14px;
     }
 }
+
+
+/* ------------------- */
+/* Mobile Navbar Fixes  */
+/* ------------------- */
+@media (max-width: 768px) {
+    body {
+        padding-top: 70px;
+    }
+
+    header .container {
+        padding: 1rem;
+    }
+
+    .logo {
+        font-size: 22px;
+    }
+
+    /* Hamburger */
+    .hamburger {
+        display: flex !important;
+        z-index: 1002; /* above nav overlay */
+    }
+
+    /* Fullscreen sliding nav */
+    .nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
+        background-color: #1a1a1a;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+        padding-top: 60px;
+        z-index: 1001;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .nav.active {
+        right: 0;
+    }
+
+    .nav ul {
+        flex-direction: column;
+        gap: 0;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    .nav li {
+        border-bottom: 1px solid #333;
+        margin: 0;
+        width: 100%;
+    }
+
+    .nav ul li a,
+    .nav ul li button {
+        display: block;
+        width: 100%;
+        padding: 1rem 1.5rem;
+        font-size: 16px;
+        font-weight: 500;
+        color: #fff !important;
+        text-align: left;
+        transition: all 0.3s ease;
+    }
+
+    .nav ul li a:hover {
+        background-color: #2a2a2a;
+        color: #eaf56d !important;
+        padding-left: 2rem;
+    }
+
+    /* Dropdown inside mobile nav */
+    .dropdown {
+        width: 100%;
+    }
+
+    .dropbtn {
+        width: 100%;
+        text-align: left;
+        padding: 1rem 1.5rem;
+        background-color: transparent;
+        color: #fff;
+    }
+
+    .dropdown-content {
+        position: relative;
+        top: 0;
+        left: 0;
+        min-width: 100%;
+        box-shadow: none;
+        background-color: #222;
+        border-radius: 0;
+    }
+
+    .dropdown-content a {
+        padding: 10px 20px;
+        color: #fff !important;
+    }
+
+    /* Search Form in mobile nav */
+    .search-form {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        background-color: #0d0d0d;
+    }
+
+    .search-form input {
+        width: 100%;
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .search-form button {
+        margin-left: 5px;
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+}

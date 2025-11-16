@@ -1,26 +1,38 @@
-{% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ post.title }} | Chhohreivung Blog{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post.title }} | Chhohreivung Blog</title>
 
-{% block og_meta %}
-<meta property="og:title" content="{{ post.title }}">
-<meta property="og:description" content="{{ post.overview }}">
-<meta property="og:image" content="{% static 'img/default-og.jpg' %}">
-{% endblock %}
+    <!-- OG / Social Meta -->
+    {% if featured_image %}
+        {% with og_img=featured_image.url %}
+    {% else %}
+        {% with og_img=static('img/default-og.jpg') %}
+    {% endif %}
+    <meta property="og:title" content="{{ post.title }}">
+    <meta property="og:description" content="{{ post.overview }}">
+    <meta property="og:image" content="{{ og_img }}">
+    {% endwith %}
 
-{% block content %}
-<main class="container">
+    <link rel="stylesheet" href="{% static 'css/myCss-fm.css' %}">
+</head>
+<body>
+<main>
     <article>
         <h1>{{ post.title }}</h1>
         <div class="featured-image">
-            <img src="{% static 'img/default-og.jpg' %}" alt="{{ post.title }}" class="responsive-img">
+            <img src="{% if featured_image %}{{ featured_image.url }}{% else %}{% static 'img/default-og.jpg' %}{% endif %}" 
+                 alt="{{ post.title }}" class="responsive-img">
         </div>
         <div class="content">
             {{ post.content|safe }}
         </div>
     </article>
 
+    <!-- Sidebar -->
     <aside>
         <h3>Recent Posts</h3>
         <ul>
@@ -37,4 +49,5 @@
         </ul>
     </aside>
 </main>
-{% endblock %}
+</body>
+</html>

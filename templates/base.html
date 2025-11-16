@@ -1,4 +1,6 @@
-{% load static cloudinary %}
+{% load static %}
+{% load cloudinary %}  {# Load Cloudinary template tags #}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,55 +8,45 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- ---------------- Meta Description ---------------- -->
-    {% block metadescription %}
-    {% if post %}
-        <meta name="description" content="{{ post.overview|truncatechars:160 }}">
-    {% else %}
-        <meta name="description" content="Latest articles on technology, web development, finance, politics, and more.">
-    {% endif %}
-    {% endblock %}
+    <!-- Meta Description -->
+    <meta name="description" content="{% block metadescription %}Latest articles on technology, web development, finance, politics, and more.{% endblock %}">
 
     <!-- ---------------- Open Graph / Facebook ---------------- -->
     <meta property="og:site_name" content="Chhohreivung Blog">
-    <meta property="og:type" content="{% block og_type %}{% if post %}article{% else %}website{% endif %}{% endblock %}">
-    <meta property="og:title" content="{% block og_title %}{% if post %}{{ post.title }}{% else %}Chhohreivung Blog{% endif %}{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}{% if post %}{{ post.overview|truncatechars:160 }}{% else %}Latest articles on technology, web development, finance, politics, and more.{% endif %}{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Chhohreivung Blog{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Latest articles on technology, web development, finance, politics, and more.{% endblock %}">
 
     {% block og_image %}
-    {% if post and post.featured_image %}
-        <meta property="og:image" content="{{ cloudinary_url(post.featured_image.name, format='auto', width=1200, height=630) }}">
-        <meta name="twitter:image" content="{{ cloudinary_url(post.featured_image.name, format='auto', width=1200, height=630) }}">
-    {% else %}
-        <meta property="og:image" content="{% static 'img/default-og.jpg' %}">
-        <meta name="twitter:image" content="{% static 'img/default-og.jpg' %}">
-    {% endif %}
+        {% if og_image %}
+            <meta property="og:image" content="{{ og_image }}">
+            <meta name="twitter:image" content="{{ og_image }}">
+        {% else %}
+            <meta property="og:image" content="{% static 'img/default-og.jpg' %}">
+            <meta name="twitter:image" content="{% static 'img/default-og.jpg' %}">
+        {% endif %}
     {% endblock %}
 
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
 
-    <!-- ---------------- Twitter ---------------- -->
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{% block twitter_title %}{% if post %}{{ post.title }}{% else %}Chhohreivung Blog{% endif %}{% endblock %}">
-    <meta name="twitter:description" content="{% block twitter_description %}{% if post %}{{ post.overview|truncatechars:160 }}{% else %}Latest articles on technology, web development, finance, politics, and more.{% endif %}{% endblock %}">
-    
-    <!-- ---------------- Page Title ---------------- -->
-    <title>{% block title %}{% if post %}{{ post.title }} | Chhohreivung Blog{% else %}Chhohreivung Blog{% endif %}{% endblock %}</title>
+    <meta name="twitter:title" content="{% block twitter_title %}Chhohreivung Blog{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Latest articles on technology, web development, finance, politics, and more.{% endblock %}">
 
-    <!-- ---------------- Links / CSS ---------------- -->
-    {% block links %}
+    <title>{% block title %}Chhohreivung Blog{% endblock %}</title>
+
+    {% block links %}{% endblock links %}
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
-    {% endblock %}
-
 </head>
 <body>
-
     {% block content %}{% endblock content %}
 
-    <!-- ---------------- Scripts ---------------- -->
+    <!-- Scripts -->
     <script src="{% static 'js/script.js' %}"></script>
     {% block scripts %}{% endblock scripts %}
-
 </body>
 </html>

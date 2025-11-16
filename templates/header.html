@@ -4,8 +4,16 @@
 
 <header>
     <div class="container flex-sp-bet">
-        <a href="{% url 'homepage' %}"><h1 class="logo">Id-Kh Blog</h1></a>
-        <nav class="nav">
+        <a href="{% url 'homepage' %}"><h1 class="logo">Pachuau</h1></a>
+        
+        <!-- Hamburger Menu Button -->
+        <button class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <nav class="nav" id="nav">
             <ul>
                 <li><a href="{% url 'homepage' %}"><i class="fa-solid fa-house"></i> Home</a></li>
                 <li class="dropdown">
@@ -30,3 +38,111 @@
     </div>
 </header>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Header script loaded');
+    
+    // Dropdown functionality
+    const dropDownBtn = document.getElementById("dropDownBtn");
+    const myDropdown = document.getElementById("myDropdown");
+    
+    console.log('Dropdown button:', dropDownBtn);
+    console.log('Dropdown menu:', myDropdown);
+    
+    if (dropDownBtn && myDropdown) {
+        dropDownBtn.addEventListener('click', function(event) {
+            console.log('Dropdown button clicked!');
+            event.preventDefault();
+            event.stopPropagation();
+            myDropdown.classList.toggle("show");
+            console.log('Dropdown classes:', myDropdown.className);
+        });
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        // Check if click is outside dropdown
+        if (!event.target.closest('.dropdown')) {
+            if (myDropdown && myDropdown.classList.contains('show')) {
+                myDropdown.classList.remove('show');
+                console.log('Dropdown closed by outside click');
+            }
+        }
+    });
+    
+    // Hamburger menu functionality
+    const hamburger = document.getElementById('hamburger');
+    const nav = document.getElementById('nav');
+    const body = document.body;
+    
+    console.log('Hamburger:', hamburger);
+    console.log('Nav:', nav);
+    
+    if (!hamburger || !nav) {
+        console.error('Hamburger or nav element not found!');
+        return;
+    }
+    
+    // Create overlay element
+    let overlay = document.querySelector('.overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'overlay';
+        body.appendChild(overlay);
+    }
+    
+    // Toggle hamburger menu
+    hamburger.addEventListener('click', function(event) {
+        console.log('Hamburger clicked!');
+        event.preventDefault();
+        event.stopPropagation();
+        
+        hamburger.classList.toggle('active');
+        nav.classList.toggle('active');
+        overlay.classList.toggle('active');
+        body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+        
+        console.log('Nav classes after click:', nav.className);
+    });
+    
+    // Close menu when clicking overlay
+    overlay.addEventListener('click', function() {
+        console.log('Overlay clicked');
+        hamburger.classList.remove('active');
+        nav.classList.remove('active');
+        overlay.classList.remove('active');
+        body.style.overflow = '';
+    });
+    
+    // Close hamburger menu when clicking a nav link (but not dropdown button)
+    const navLinks = nav.querySelectorAll('a:not(.dropdown-content a)');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+            // Don't close menu if clicking dropdown items
+            if (!event.target.closest('.dropdown')) {
+                hamburger.classList.remove('active');
+                nav.classList.remove('active');
+                overlay.classList.remove('active');
+                body.style.overflow = '';
+            }
+        });
+    });
+    
+    // Close hamburger menu when clicking dropdown category links
+    const dropdownLinks = document.querySelectorAll('.dropdown-content a');
+    dropdownLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            // Close both dropdown and hamburger menu
+            if (myDropdown) {
+                myDropdown.classList.remove('show');
+            }
+            hamburger.classList.remove('active');
+            nav.classList.remove('active');
+            overlay.classList.remove('active');
+            body.style.overflow = '';
+        });
+    });
+    
+    console.log('All event listeners attached successfully');
+});
+</script>

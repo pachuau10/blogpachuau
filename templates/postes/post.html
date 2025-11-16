@@ -22,27 +22,64 @@
     <div class="container flex-ctr-str">
         <div class="post flex-str-clm">
             <h1 class="post-title">{{post.title}}</h1>
-            <p class="categorie">Categories : 
+            
+            <p class="categorie post-info">
+                <span>Categories : </span>
                 {% for categorie in post.categories.all %}
-                        {{categorie.title}}, 
+                    <a href="{% url 'category' categorie.slug %}">{{ categorie.title }}</a>{% if not forloop.last %},{% endif %}
                 {% endfor %}
             </p>
+            
             <hr width="50%">
-            <img class="thumbnail" src="{{post.thumbnail.url}}" alt="thumbnail of {{post.slug}}">
-            <div class="content">{{post.content | markdown | safe}}</div>
+            
+            <img class="thumbnail" src="{{post.thumbnail_img.url}}" alt="thumbnail of {{post.slug}}">
+            
+            <div class="post-content">
+                {{ post.content | safe }} 
+            </div>
 
             <div class="about-author flex-center">
-                <p><b>Wrote By : </b></p>
                 <div class="profile-img">
-                    <img src="{{post.author.profile_picture.url}}" alt="">
                 </div>
-                <p class="profile-user">{{post.author.user}}</p>
+                <div class="profile-details">
+                    <b>Wrote By : </b>
+                    <p class="profile-user">{{ post.author.username }}</p> 
+                </div>
             </div>
 
         </div>
+        
         <div class="aside flex-ctr-clm">
-            <h2>Aside</h2>
-            <div class="ad-bar"></div>
+            <h2>Categories</h2>
+            <div class="category-list">
+                {% for category in all_categories %}
+                    <p>
+                        <a href="{% url 'category' category.slug %}">
+                            {{ category.title }} ({{ category.post_count }})
+                        </a>
+                    </p>
+                {% empty %}
+                    <p>No categories found.</p>
+                {% endfor %}
+            </div>
+
+            <hr>
+            
+            <h2>Recent Posts</h2>
+            <div class="recent-posts">
+                {% for recent_post in recent_posts %}
+                    <p>
+                        <a href="{% url 'post' recent_post.slug %}">
+                            {{ recent_post.title }}
+                        </a>
+                    </p>
+                {% empty %}
+                    <p>No recent posts found.</p>
+                {% endfor %}
+            </div>
+
+            <hr>
+
         </div>
     </div>
 </main>
@@ -50,8 +87,3 @@
 {% include 'footer.html' %}
 
 {% endblock content %}
-
-
-{% block scripts %}
-<script src="{% static 'js/script.js' %}"></script>
-{% endblock scripts %}

@@ -1,32 +1,43 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+# Import Count for category post counts
+from django.db.models import Q, Count 
 from .models import Category, Post
-from django.db.models import Q
+from django.core.paginator import Paginator
 
 
-def homepage(request) :
-    # categories = Category.objects.all()[0:3]
-    # featured = Post.objects.filter(featured=True)
-    # latest = Post.objects.order_by('-timestamp')[0:3]
+from django.core.paginator import Paginator
 
-    # context= {
-    #     'object_list': featured,
-    #     'latest': latest,
-    #     'categories':categories,
-    # }
+def homepage(request):
+    posts = Post.objects.order_by('-created_at')  # your original variable
+    paginator = Paginator(posts, 5)  # 5 posts per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
-    # posts = Post.objects.order_by('-timestamp')
-    posts = Post.objects.order_by('-created_at')
+    recent_posts = Post.objects.order_by('-created_at')[:5]
+    all_categories = Category.objects.annotate(post_count=Count('post')).filter(post_count__gt=0)
+
     context = {
-        'posts': posts,
+        'posts': page_obj,             # use posts for template
+        'recent_posts': recent_posts,
+        'all_categories': all_categories,
     }
 
     return render(request, 'postes/index.html', context)
 
 
+
 def post(request,slug):
-    post = Post.objects.get(slug=slug)
+    # Retrieve the specific post or raise 404
+    post = get_object_or_404(Post, slug=slug)
+    
+    # --- Sidebar Content FIX: Must be added to detail view context ---
+    recent_posts = Post.objects.order_by('-created_at')[:5] 
+    all_categories = Category.objects.annotate(post_count=Count('post')).filter(post_count__gt=0)
+    
     context = {
         'post': post,
+        'recent_posts': recent_posts,       # FIXED: Passing sidebar data
+        'all_categories': all_categories,   # FIXED: Passing sidebar data
     }
     return render(request, 'postes/post.html', context)
 
@@ -35,32 +46,54 @@ def about(request):
     return render(request, 'postes/about.html')
 
 
-def category_Post (request, slug):
-    category = Category.objects.get(slug = slug)
-    posts = Post.objects.filter(categories__in=[category])
+def category_Post(request, slug):
+    category = get_object_or_404(Category, slug=slug)
+    posts = Post.objects.filter(categories__in=[category]).order_by('-created_at')
+    
+    paginator = Paginator(posts, 5)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)  # overwrite posts with page object
+
+    recent_posts = Post.objects.order_by('-created_at')[:5]
+    all_categories = Category.objects.annotate(post_count=Count('post')).filter(post_count__gt=0)
+
     context = {
-        'posts': posts,
         'category': category,
+        'posts': posts,
+        'recent_posts': recent_posts,
+        'all_categories': all_categories,
     }
+
     return render(request, 'postes/category.html', context)
 
 
-def search(request) :
-    queryset = Post.objects.all()
+
+def search(request):
     query = request.GET.get('q')
-    if query:
-        queryset = queryset.filter(
-            Q(title__icontains=query) |
-            Q(overview__icontains=query)
-        ).distinct()
-    else :
+    if not query:
         return redirect('homepage')
 
+    posts = Post.objects.filter(
+        Q(title__icontains=query) |
+        Q(overview__icontains=query)
+    ).distinct().order_by('-created_at')
+
+    paginator = Paginator(posts, 5)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)  # overwrite posts with page object
+
+    recent_posts = Post.objects.order_by('-created_at')[:5]
+    all_categories = Category.objects.annotate(post_count=Count('post')).filter(post_count__gt=0)
+
     context = {
-        'posts': queryset,
         'query': query,
+        'posts': posts,
+        'recent_posts': recent_posts,
+        'all_categories': all_categories,
     }
+
     return render(request, 'postes/search.html', context)
+
 
 
 def custom_404(request, exception):

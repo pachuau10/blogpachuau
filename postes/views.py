@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q, Count
-from .models import Category, Post
 from django.core.paginator import Paginator
+from .models import Post, Category
 
 def homepage(request):
     posts = Post.objects.order_by('-created_at')
@@ -12,14 +12,10 @@ def homepage(request):
     recent_posts = Post.objects.order_by('-created_at')[:5]
     all_categories = Category.objects.annotate(post_count=Count('post')).filter(post_count__gt=0)
 
-    # Use first post for OG, fallback if empty
-    first_post = posts.first() if posts.exists() else None
-
     context = {
         'posts': page_obj,
         'recent_posts': recent_posts,
         'all_categories': all_categories,
-        'og_post': first_post,
     }
     return render(request, 'postes/index.html', context)
 
@@ -33,7 +29,6 @@ def post(request, slug):
         'post': post,
         'recent_posts': recent_posts,
         'all_categories': all_categories,
-        'og_post': post,
     }
     return render(request, 'postes/post.html', context)
 
@@ -41,7 +36,7 @@ def post(request, slug):
 def category_Post(request, slug):
     category = get_object_or_404(Category, slug=slug)
     posts = Post.objects.filter(categories__in=[category]).order_by('-created_at')
-
+    
     paginator = Paginator(posts, 5)
     page_number = request.GET.get('page')
     posts = paginator.get_page(page_number)
@@ -54,8 +49,8 @@ def category_Post(request, slug):
         'posts': posts,
         'recent_posts': recent_posts,
         'all_categories': all_categories,
-        'og_post': posts[0] if posts else None,
     }
+
     return render(request, 'postes/category.html', context)
 
 
@@ -80,8 +75,8 @@ def search(request):
         'posts': posts,
         'recent_posts': recent_posts,
         'all_categories': all_categories,
-        'og_post': posts[0] if posts else None,
     }
+
     return render(request, 'postes/search.html', context)
 
 
